@@ -3,7 +3,7 @@
   "name": "ai-requirements",
   "description": "PTO sync (Slack → Google Sheet) and email classifier (Gmail labels) for Claude Desktop.",
   "metadata": {
-    "version": "0.2.0"
+    "version": "0.2.1"
   },
   "owner": {
     "name": "deadline314",
@@ -13,7 +13,7 @@
     {
       "name": "pto-system",
       "source": "./pto_system",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Sync PTO requests from Slack to Google Sheet, incrementally, with manager-approval detection in thread replies.",
       "homepage": "https://github.com/deadline314/AI-requirements/tree/main/pto_system",
       "repository": "https://github.com/deadline314/AI-requirements",
@@ -24,7 +24,7 @@
     {
       "name": "email-classify",
       "source": "./email_classify",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Classify recent Gmail messages into business categories and apply AI/* labels via the Google Workspace MCP.",
       "homepage": "https://github.com/deadline314/AI-requirements/tree/main/email_classify",
       "repository": "https://github.com/deadline314/AI-requirements",

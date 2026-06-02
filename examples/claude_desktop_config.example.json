@@ -1,19 +1,14 @@
 {
-  "_warning_": "This file contains placeholder values only. Do NOT commit a copy of this file with real credentials. The recommended path is to use the .dxt one-click installer instead — see examples/README.md.",
+  "_warning_": "This file contains placeholder values only. Do NOT commit a copy of this file with real credentials. Copy the snippet below into your local claude_desktop_config.json (NOT into this repo, NOT into chat) and replace the three PASTE_... values from your company password manager.",
+  "_tools_note_": "Adjust the --tools list based on which plugins you use: 'sheets gmail' for PTO, 'gmail' for email-classify only, 'sheets gmail' if you use both.",
   "mcpServers": {
     "google-workspace": {
       "command": "uvx",
-      "args": [
-        "workspace-mcp",
-        "--tools",
-        "sheets",
-        "gmail"
-      ],
+      "args": ["workspace-mcp", "--tools", "sheets", "gmail"],
       "env": {
-        "GOOGLE_OAUTH_CLIENT_ID": "REPLACE_WITH_YOUR_CLIENT_ID.apps.googleusercontent.com",
-        "GOOGLE_OAUTH_CLIENT_SECRET": "REPLACE_WITH_YOUR_CLIENT_SECRET",
-        "USER_GOOGLE_EMAIL": "REPLACE_WITH_YOUR_GMAIL_ADDRESS",
-        "OAUTHLIB_INSECURE_TRANSPORT": "1"
+        "GOOGLE_OAUTH_CLIENT_ID": "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "PASTE_YOUR_CLIENT_SECRET_HERE",
+        "USER_GOOGLE_EMAIL": "your.work.email@company.com"
       }
     }
   }

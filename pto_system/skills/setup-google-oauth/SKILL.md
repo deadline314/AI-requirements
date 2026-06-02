@@ -1,11 +1,11 @@
 ---
 name: setup-google-oauth
-description: Guide a teammate through pasting the company-provided Google OAuth credentials into Claude Desktop's Google Workspace MCP. The Google Cloud project + OAuth client are already provisioned by the admin. Use when the user invokes /pto-system:setup or /email-classify:setup, or when google-workspace MCP tool calls fail with auth errors.
+description: Guide a teammate through pasting the company-provided Google OAuth credentials into Claude Desktop's claude_desktop_config.json so the google-workspace MCP can run. Use when the user invokes /pto-system:setup or /email-classify:setup, or when google-workspace MCP tool calls fail with auth errors.
 ---
 
 # Setup Google OAuth — One-time Setup
 
-You are guiding a teammate through a one-time, ~3-minute setup so they can use this plugin in **Claude Desktop**.
+You are guiding a teammate through a one-time, ~5-minute setup so they can use this plugin in **Claude Desktop**.
 
 The company admin has already done the heavy lifting:
 
@@ -17,26 +17,31 @@ The company admin has already done the heavy lifting:
 
 Your job is to walk the user through:
 
-1. Installing the Google Workspace MCP (`.dxt` one-click installer)
-2. Pasting the credentials into Claude Desktop's Extensions form (NOT into chat, NOT into a file)
-3. Doing the first-run Google consent flow
+1. Locating their `claude_desktop_config.json`
+2. Adding the `google-workspace` MCP server entry with credentials in the `env` block
+3. Restarting Claude Desktop and completing the first-run Google consent flow
 
 ---
 
 ## Hard security rules — read first, never break
 
-These rules are non-negotiable.
+These rules are non-negotiable. The setup writes credentials into a plain JSON file on disk, so the rules around handling that file are stricter than a GUI-based flow.
 
-1. **NEVER ask the user to paste their `GOOGLE_OAUTH_CLIENT_SECRET` into the chat.** The secret goes ONLY into the Claude Desktop Extensions GUI form, where it is stored in the OS secure store (Keychain on macOS, Credential Manager on Windows). If the user tries to paste it in chat, refuse and explain why.
-2. **NEVER repeat, echo, mask-and-show, or summarize a secret you happen to see.** If the user pastes one anyway, respond ONLY with: *"I deleted that from my view. Please rotate that secret immediately at <https://console.cloud.google.com/apis/credentials> (or ask your IT admin to rotate it for you), then paste the NEW secret only into the Desktop Extensions form, never into a chat."*
-3. **NEVER write a secret to any file** — not `claude_desktop_config.json`, not `.env`, not anywhere on disk that the user controls. The DXT installer + Desktop GUI handles storage.
-4. **NEVER call any tool with the secret as an argument.** Tools that accept arbitrary strings (web search, file write, shell) are forbidden to receive the secret value.
-5. The `client_id` is less sensitive but still PII-adjacent. You may show it masked (first 12 chars + `...` + last 30 chars, where the last 30 should be `.apps.googleusercontent.com`) to confirm correctness with the user. Never write the unmasked value to git-tracked files.
-6. If the user expresses confusion at any step, offer to pause. A confused user is how secrets leak.
+1. **NEVER ask the user to paste their `GOOGLE_OAUTH_CLIENT_SECRET` into the chat.** The secret goes ONLY into `claude_desktop_config.json` on the user's local machine. If the user tries to paste it into chat, refuse and explain why.
+2. **NEVER repeat, echo, mask-and-show, or summarize a secret you happen to see.** If the user pastes one anyway, respond ONLY with: *"I deleted that from my view. Please rotate that secret immediately at <https://console.cloud.google.com/apis/credentials> (or ask your IT admin to rotate it for you), then paste the NEW secret only into your local `claude_desktop_config.json`, never into a chat."*
+3. **`claude_desktop_config.json` MUST stay on the user's local machine.** It contains the secret in plaintext. It must NEVER be:
+   - Committed to git (any repo, public or private)
+   - Pasted into chat, Slack, Discord, email, PR, issue, screenshot, or screen share
+   - Synced to a public cloud folder (public Dropbox link, public Google Drive, etc.)
+   - Copied to a shared machine
+4. **NEVER write the secret into any file inside the plugin's repo.** No `.env`, no `config.local.json`, no commented-out example with the real value. The only file that holds the secret is the user's personal `claude_desktop_config.json`.
+5. **NEVER call any tool with the secret as an argument.** Tools that accept arbitrary strings (web search, file write, shell with the secret inlined, etc.) are forbidden to receive the secret value. If you must edit `claude_desktop_config.json` for the user, instruct them to do it themselves rather than running an automated edit that puts the secret into your tool input.
+6. The `client_id` is less sensitive but still PII-adjacent. You may show it masked (first 12 chars + `...` + `.apps.googleusercontent.com`) to confirm correctness with the user. Never show the unmasked middle, never write the unmasked value to git-tracked files.
+7. If the user expresses confusion at any step, offer to pause. A confused user is how secrets leak.
 
 ---
 
-## Step 1 — Confirm where their credentials came from
+## Step 1 — Confirm the user has credentials from a safe channel
 
 Send the user:
 
@@ -54,37 +59,84 @@ If the user says they have no credentials at all, stop and tell them:
 
 ---
 
-## Step 2 — Install the Google Workspace MCP via DXT
+## Step 2 — Confirm `uv` / `uvx` is installed
 
-Send:
+The MCP server runs through `uvx`. If it's missing, the MCP will fail to start with a "command not found" error.
 
-> *Open <https://github.com/taylorwilsdon/google_workspace_mcp/releases> and find the latest release. Download the file ending in `.dxt`. Double-click it — Claude Desktop will open and show an Install dialog. Click **Install**.*
+Send the user:
 
-Wait for confirmation that the install succeeded.
+> *Open a terminal and run `uvx --version`.*
+>
+> *If it prints a version number, you're good. If it says "command not found" or "not recognized", install `uv` first:*
+>
+> - *macOS / Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`*
+> - *Windows (PowerShell): `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`*
+>
+> *Then close and reopen the terminal so `uvx` is on PATH.*
 
-If the install fails ("couldn't open" or similar) the user's Claude Desktop is too old. Tell them to update Claude Desktop and try again.
+Wait for confirmation before continuing.
 
 ---
 
-## Step 3 — Paste credentials into the Extensions GUI
+## Step 3 — Locate `claude_desktop_config.json`
 
-This is the **only** safe place for the secret. Send the user:
+Send the user the path for their OS:
 
-> *In Claude Desktop, go to **Settings → Extensions → Google Workspace MCP**. You'll see a form with three fields:*
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json` (typically `C:\Users\<you>\AppData\Roaming\Claude\claude_desktop_config.json`)
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+Tell them:
+
+> *Open that file in any text editor. If the file doesn't exist, create it with the content `{}` first.*
 >
-> - *`GOOGLE_OAUTH_CLIENT_ID` → paste the Client ID from your password manager*
-> - *`GOOGLE_OAUTH_CLIENT_SECRET` → paste the secret HERE (this is the safe place — OS secure store, not a config file, not chat)*
-> - *`USER_GOOGLE_EMAIL` → your own work email address*
+> *Heads up: this file is private to your machine. After we finish, please confirm it's NOT inside any git repo and NOT inside a synced public folder.*
+
+---
+
+## Step 4 — Add the `google-workspace` MCP server entry
+
+Tell the user to add (or merge into the existing `mcpServers` block) the following entry. Pick the right `--tools` value based on which plugin(s) they use:
+
+- **PTO sync only** → `"sheets", "gmail"`
+- **Email classify only** → `"gmail"`
+- **Both plugins** → `"sheets", "gmail"` (the union)
+
+Send them this template (they replace the three placeholder values directly in the file — NOT in chat):
+
+```json
+{
+  "mcpServers": {
+    "google-workspace": {
+      "command": "uvx",
+      "args": ["workspace-mcp", "--tools", "sheets", "gmail"],
+      "env": {
+        "GOOGLE_OAUTH_CLIENT_ID": "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "PASTE_YOUR_CLIENT_SECRET_HERE",
+        "USER_GOOGLE_EMAIL": "your.work.email@company.com"
+      }
+    }
+  }
+}
+```
+
+Walk them through it:
+
+> *Replace the three `PASTE_...` placeholders with the values from your password manager + your own work email. Keep the rest as-is.*
 >
-> *Click **Save**. Then **fully quit Claude Desktop** (Cmd+Q on macOS, Ctrl+Q on Windows — not just close the window) and reopen it.*
+> *Keeping `--tools` to the minimum your plugin needs is a security best practice — it limits what scopes Google asks you to consent to.*
+>
+> *If you already have other MCP servers in this file, merge `google-workspace` into the existing `mcpServers` object — don't overwrite the whole file.*
+>
+> *Save the file. Then **fully quit Claude Desktop** (Cmd+Q on macOS, Ctrl+Q or right-click tray → Quit on Windows — closing the window is not enough) and reopen it.*
 
 Wait for confirmation that they have saved and restarted.
 
 ---
 
-## Step 4 — (Optional) Verify the client_id format
+## Step 5 — (Optional) Verify the client_id format
 
-If the user wants to double-check they pasted the right thing, ask them to paste **just the client_id** (NOT the secret) into chat. Validate:
+If the user wants to double-check they pasted the right thing into the file, ask them to paste **just the client_id** (NOT the secret) into chat. Validate:
 
 - Ends with `.apps.googleusercontent.com`
 - Has a numeric prefix followed by `-`
@@ -98,7 +150,7 @@ If they paste something that looks like the secret instead (long random string w
 
 ---
 
-## Step 5 — First-run Google consent
+## Step 6 — First-run Google consent
 
 Send:
 
@@ -116,15 +168,22 @@ If the user reports a "Google hasn't verified this app" warning, that means the 
 
 Once `/pto-system:check-setup` returns `ready: true`, the user is fully set up. Tell them:
 
-> *You're all set. The same Google connection works for both `pto-system` and `email-classify`, so you don't need to repeat this for the other plugin. Try `/pto-system:sync-pto` or `/email-classify:classify-emails` whenever you're ready.*
+> *You're all set. The same Google connection works for both `pto-system` and `email-classify`, so you don't need to repeat this for the other plugin (though if you only added `"gmail"` to `--tools`, you'd need to add `"sheets"` before using PTO sync). Try `/pto-system:sync-pto` or `/email-classify:classify-emails` whenever you're ready.*
+
+Final reminder to send:
+
+> *One last thing: please double-check that `claude_desktop_config.json` is NOT inside any git repo and NOT inside a synced public folder. The secret is in plaintext in that file — it stays only on your machine.*
 
 ---
 
 ## Common pitfalls
 
+- **`uvx: command not found`** → Step 2 was skipped. Install `uv`, reopen terminal, restart Claude Desktop.
 - **Tokens expire after 7 days** → admin set up `External + Testing`, not `Internal`. Tell the user to ping the admin; meanwhile they re-auth weekly.
 - **"This app isn't verified" page** → expected if the company hasn't verified the app with Google. Click **Advanced → Continue**.
-- **DXT install fails with "couldn't open"** → Claude Desktop too old. Update it.
-- **`/...:check-setup` says `ready: false` / `reason: "auth"`** → the user hasn't completed the Google consent flow yet (Step 5). Trigger it by retrying.
+- **`/...:check-setup` says `ready: false` / `reason: "auth"`** → the user hasn't completed the Google consent flow yet (Step 6). Trigger it by retrying.
+- **MCP tool calls return "missing scope" errors** → user only added `"gmail"` to `--tools` but is now using PTO (which needs `sheets`). Update `--tools` to include both, restart Claude Desktop, re-run consent.
+- **JSON parse error in Claude Desktop logs** → user pasted the template but broke the existing `mcpServers` block. Tell them to validate the file at <https://jsonlint.com/> (paste-only-once, no save) or just open it in an editor with JSON syntax highlighting.
 - **User pastes the secret in chat anyway** → security rule #2 verbatim. Do not soften the message. The cost of a leaked secret is much higher than a moment of awkwardness.
 - **User has no credentials** → they need to ask the admin via the company password manager. Do not walk them through Google Cloud Console — that's the admin's job, not theirs.
+- **User asks if they can commit `claude_desktop_config.json` to a private repo** → no. Even private repos get cloned, forked, screenshot, and shared. The file stays on the local machine, full stop.

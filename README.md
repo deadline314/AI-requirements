@@ -52,7 +52,7 @@ Claude walks you through ~3 minutes of setup:
 
 1. Confirm you can see the `client_id` and `client_secret` in the company
    password manager (1Password / Bitwarden / Dashlane / etc.)
-2. Download the Google Workspace MCP `.dxt` installer and double-click it
+2. Download the Google Workspace MCP `.mcpb` installer (formerly `.dxt`) and double-click it
 3. Paste the credentials into **Settings → Extensions → Google Workspace
    MCP** (this is OS secure storage, not a config file, not chat)
 4. Restart Claude Desktop and run `/pto-system:check-setup` — your browser
@@ -122,7 +122,8 @@ This codebase follows strict no-leak rules:
   `GOOGLE_OAUTH_CLIENT_SECRET` into a Claude conversation, Claude is
   instructed to refuse and tell you to rotate it.
 - **Secrets live in OS secure storage**, not in any file in this repo. The
-  recommended setup uses the `.dxt` one-click installer; secrets go into
+  recommended setup uses the `.mcpb` one-click installer (MCP Bundle —
+  formerly `.dxt`); secrets go into
   Claude Desktop's Extensions form (Keychain on macOS, Credential Manager
   on Windows).
 - **`.gitignore` blocks the obvious leakers**: `credentials.json`,
@@ -165,11 +166,11 @@ AI-requirements/
 ├── README.md
 ├── examples/
 │   ├── README.md
-│   └── claude_desktop_config.example.json    # fallback only; use DXT instead
+│   └── claude_desktop_config.example.json    # fallback only; use MCPB instead
 │
 ├── pto_system/
 │   ├── .claude-plugin/plugin.json
-│   ├── .mcp.json                              # for Claude Code; Desktop uses DXT
+│   ├── .mcp.json                              # for Claude Code; Desktop uses MCPB bundle
 │   ├── settings.json                          # allow / ask / deny per tool
 │   ├── skills/
 │   │   ├── setup-google-oauth/SKILL.md        # one-time setup wizard
@@ -207,6 +208,6 @@ or write to a sheet. Both of these are core to what these plugins do, so we
 use [`taylorwilsdon/google_workspace_mcp`](https://github.com/taylorwilsdon/google_workspace_mcp)
 — a community MCP that exposes the full Gmail and Sheets API surface.
 
-The setup skill recommends installing it via the `.dxt` one-click installer
+The setup skill recommends installing it via the `.mcpb` one-click installer
 because that flow puts your secret into OS secure storage instead of a
 plain-text JSON file.

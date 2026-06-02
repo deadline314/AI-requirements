@@ -1,12 +1,12 @@
 # Claude Desktop config — fallback example only
 
 ⚠️ **Most users should NOT use this file.** The recommended path is the
-DXT one-click installer for Google Workspace MCP — secrets go into Claude
-Desktop's Extensions form (OS secure storage), not into a plain text
-config file.
+MCPB one-click installer (`.mcpb`, formerly `.dxt`) for Google Workspace
+MCP — secrets go into Claude Desktop's Extensions form (OS secure
+storage), not into a plain text config file.
 
 This fallback example exists only for advanced users whose machines block
-DXT installs. The skill `setup-google-oauth` will guide you to the DXT
+MCPB installs. The skill `setup-google-oauth` will guide you to the MCPB
 path first.
 
 ## If you must use this fallback
@@ -31,6 +31,6 @@ If the secret leaks (committed, sent in chat, screenshotted, etc.):
 
 1. Go to <https://console.cloud.google.com/apis/credentials>
 2. Click your OAuth client → **Reset Secret**
-3. Update the new value via the same path as above (DXT form or this
-   config file)
+3. Update the new value via the same path as above (MCPB Extensions form
+   or this config file)
 4. Restart Claude Desktop
