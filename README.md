@@ -17,7 +17,7 @@ Once installed, you just chat with Claude — it walks you through the rest.
 5. Add Slack: **Customize → Connectors → Slack → Connect**.
 6. **Restart Claude Desktop** fully (Cmd/Ctrl+Q, then reopen).
 
-## How to set up Google (one-time, ~10 minutes)
+## How to set up Google (one-time)
 
 In any Claude Desktop chat, type:
 
@@ -25,14 +25,23 @@ In any Claude Desktop chat, type:
 /pto-system:setup
 ```
 
-Claude will guide you click-by-click through Google Cloud Console and Claude
-Desktop installation. The setup is shared with `email-classify`, so you only do
-it once.
+Claude first asks **whether your company has already given you Google credentials**:
 
-You will **never need to paste a secret into chat**. Claude is hard-coded to
-refuse and instructs you where it actually goes (the OS secure storage via
-Claude Desktop's Extensions form). See the [Security](#security) section
-below.
+- **Yes (fast path, ~3 minutes)** — you skip Google Cloud Console entirely. Just download the Google Workspace MCP `.dxt` installer, paste the company-provided `client_id` and `client_secret` into Claude Desktop's Extensions form (OS secure storage), and you're done.
+- **No (full path, ~10 minutes)** — Claude walks you click-by-click through Google Cloud Console: create a project, enable Gmail/Sheets/Drive APIs, set up OAuth consent (recommend `Internal` mode for Google Workspace orgs — tokens never expire), create an OAuth Desktop client, then DXT install.
+
+Either path, the setup is **shared with `email-classify`**, so you only do it once.
+
+You will **never need to paste a secret into chat**. Claude is hard-coded to refuse and instructs you where it actually goes (Claude Desktop's Extensions form). See [Security](#security).
+
+### For team admins
+
+If you (the admin) want to provision one Google Cloud project and share the `client_id` / `client_secret` with your team so they get the fast path:
+
+- Use **Internal** OAuth consent type (requires Google Workspace org) so tokens never expire and you skip Google's verification process.
+- Distribute the `client_secret` via a password manager (1Password / Bitwarden / Dashlane shared vault). **Never** via Slack DM, email, Notion, or git.
+- Each teammate still does their own Google consent on first run, with their own Google account — you cannot see their data, only the API quota is shared (which is fine for these plugins' usage levels).
+- To rotate: <https://console.cloud.google.com/apis/credentials> → Reset Secret → notify everyone to repaste in Claude Desktop's Extensions form.
 
 ## How to use
 
