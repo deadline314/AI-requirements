@@ -216,3 +216,34 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# === Secrets / credentials (never commit) ===
+# Google OAuth credentials downloaded from GCP Console
+credentials.json
+*credentials*.json
+client_secret*.json
+*.client_secret.json
+
+# OAuth tokens cached by MCP servers
+token.json
+*.token.json
+.credentials/
+.tokens/
+
+# Claude Desktop / Code config files (may contain secrets)
+claude_desktop_config.json
+claude_desktop_config.local.json
+.mcp.local.json
+*.local.json
+
+# Generic env / secret files
+.env.*
+*.secret
+*.secrets
+secrets/
+*.key
+*.pem
+
+# Backup files created by setup scripts
+claude_desktop_config.backup.*.json
+*.backup.*

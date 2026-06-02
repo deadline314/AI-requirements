@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__google-workspace__list_sheets",
+      "mcp__google-workspace__get_sheet_data",
+      "mcp__google-workspace__list_spreadsheets",
+      "mcp__google-workspace__get_spreadsheet_info",
+      "mcp__google-workspace__search_gmail_messages",
+      "mcp__google-workspace__get_gmail_message_content",
+      "mcp__google-workspace__get_gmail_messages_content_batch",
+      "mcp__google-workspace__get_gmail_thread_content",
+      "mcp__google-workspace__list_gmail_labels"
+    ],
+    "ask": [
+      "mcp__google-workspace__update_cells",
+      "mcp__google-workspace__batch_update_cells",
+      "mcp__google-workspace__append_row",
+      "mcp__google-workspace__create_sheet"
+    ],
+    "deny": [
+      "mcp__google-workspace__delete_sheet",
+      "mcp__google-workspace__share_spreadsheet",
+      "mcp__slack__chat_postMessage",
+      "mcp__slack__chat_update",
+      "mcp__slack__chat_delete"
+    ]
+  }
+}

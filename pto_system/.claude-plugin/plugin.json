@@ -1,0 +1,11 @@
+{
+  "name": "pto-system",
+  "displayName": "PTO System",
+  "version": "0.1.0",
+  "description": "Sync PTO (paid time off) requests from Slack to Google Sheet incrementally. Detects manager approval in thread replies and updates the sheet only when approved.",
+  "author": {
+    "name": "stanl"
+  },
+  "keywords": ["pto", "leave", "slack", "google-sheets", "hr", "approval"],
+  "license": "MIT"
+}

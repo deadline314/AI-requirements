@@ -1,0 +1,19 @@
+{
+  "name": "ai-requirements",
+  "owner": {
+    "name": "stanl",
+    "url": "https://github.com/stanl"
+  },
+  "plugins": [
+    {
+      "name": "pto-system",
+      "source": "./pto_system",
+      "description": "Sync PTO requests from Slack to Google Sheet, incrementally, with manager-approval detection in thread replies."
+    },
+    {
+      "name": "email-classify",
+      "source": "./email_classify",
+      "description": "Classify recent Gmail messages into business categories and apply AI/* labels via the Google Workspace MCP."
+    }
+  ]
+}

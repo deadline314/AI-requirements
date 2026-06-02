@@ -1,0 +1,11 @@
+{
+  "name": "email-classify",
+  "displayName": "Email Classifier",
+  "version": "0.1.0",
+  "description": "Classify recent Gmail messages into business categories (contract, sales, support, finance, hr, newsletter, internal) and apply Gmail labels via the Google Workspace MCP. Built because Claude's built-in Google connector cannot edit labels.",
+  "author": {
+    "name": "stanl"
+  },
+  "keywords": ["gmail", "email", "classification", "labels", "automation"],
+  "license": "MIT"
+}

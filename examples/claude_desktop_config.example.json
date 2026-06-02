@@ -1,0 +1,20 @@
+{
+  "_warning_": "This file contains placeholder values only. Do NOT commit a copy of this file with real credentials. The recommended path is to use the .dxt one-click installer instead — see examples/README.md.",
+  "mcpServers": {
+    "google-workspace": {
+      "command": "uvx",
+      "args": [
+        "workspace-mcp",
+        "--tools",
+        "sheets",
+        "gmail"
+      ],
+      "env": {
+        "GOOGLE_OAUTH_CLIENT_ID": "REPLACE_WITH_YOUR_CLIENT_ID.apps.googleusercontent.com",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "REPLACE_WITH_YOUR_CLIENT_SECRET",
+        "USER_GOOGLE_EMAIL": "REPLACE_WITH_YOUR_GMAIL_ADDRESS",
+        "OAUTHLIB_INSECURE_TRANSPORT": "1"
+      }
+    }
+  }
+}
