@@ -19,29 +19,55 @@ Once installed, you just chat with Claude — it walks you through the rest.
 
 ## How to set up Google (one-time)
 
+This plugin uses Google credentials your **admin has already provisioned**
+for the team (one shared Google Cloud project, one shared OAuth Desktop
+client). You don't need to touch Google Cloud Console — you just paste the
+credentials your admin gave you into Claude Desktop.
+
 In any Claude Desktop chat, type:
 
 ```
 /pto-system:setup
 ```
 
-Claude first asks **whether your company has already given you Google credentials**:
+Claude walks you through ~3 minutes of setup:
 
-- **Yes (fast path, ~3 minutes)** — you skip Google Cloud Console entirely. Just download the Google Workspace MCP `.dxt` installer, paste the company-provided `client_id` and `client_secret` into Claude Desktop's Extensions form (OS secure storage), and you're done.
-- **No (full path, ~10 minutes)** — Claude walks you click-by-click through Google Cloud Console: create a project, enable Gmail/Sheets/Drive APIs, set up OAuth consent (recommend `Internal` mode for Google Workspace orgs — tokens never expire), create an OAuth Desktop client, then DXT install.
+1. Confirm you can see the `client_id` and `client_secret` in the company
+   password manager (1Password / Bitwarden / Dashlane / etc.)
+2. Download the Google Workspace MCP `.dxt` installer and double-click it
+3. Paste the credentials into **Settings → Extensions → Google Workspace
+   MCP** (this is OS secure storage, not a config file, not chat)
+4. Restart Claude Desktop and run `/pto-system:check-setup` — your browser
+   opens once for Google consent, then you're done forever.
 
-Either path, the setup is **shared with `email-classify`**, so you only do it once.
+The setup is **shared with `email-classify`**, so you only do it once.
 
-You will **never need to paste a secret into chat**. Claude is hard-coded to refuse and instructs you where it actually goes (Claude Desktop's Extensions form). See [Security](#security).
+You will **never need to paste a secret into chat**. Claude is hard-coded
+to refuse and instructs you where it actually goes (Claude Desktop's
+Extensions form). See [Security](#security).
 
-### For team admins
+### For the team admin (one-time, before sharing the repo)
 
-If you (the admin) want to provision one Google Cloud project and share the `client_id` / `client_secret` with your team so they get the fast path:
+If you are the person provisioning credentials for the team, do this once:
 
-- Use **Internal** OAuth consent type (requires Google Workspace org) so tokens never expire and you skip Google's verification process.
-- Distribute the `client_secret` via a password manager (1Password / Bitwarden / Dashlane shared vault). **Never** via Slack DM, email, Notion, or git.
-- Each teammate still does their own Google consent on first run, with their own Google account — you cannot see their data, only the API quota is shared (which is fine for these plugins' usage levels).
-- To rotate: <https://console.cloud.google.com/apis/credentials> → Reset Secret → notify everyone to repaste in Claude Desktop's Extensions form.
+1. **Create a Google Cloud project** in your company's Workspace org
+   (must be Workspace, not personal Gmail, so you can use Internal mode).
+2. **Enable** Gmail API, Google Sheets API, and Google Drive API.
+3. **OAuth consent screen** → **Internal** user type → fill App name +
+   support email + developer contact → don't add scopes here. Internal
+   mode means tokens never expire and you skip Google's verification.
+4. **Credentials** → Create OAuth client ID → **Desktop app** → name it
+   `Claude Desktop`. Download the JSON.
+5. **Move** `client_id` and `client_secret` into a shared password
+   manager vault (1Password / Bitwarden / Dashlane). Delete the
+   downloaded JSON from your machine.
+6. **Share** that vault with teammates who should have the plugin.
+7. Distribute this repo's GitHub URL to them. They run
+   `/pto-system:setup` inside Claude Desktop and follow the guide.
+
+Never share `client_secret` over Slack DM, email, Notion, SMS, or git.
+To rotate: <https://console.cloud.google.com/apis/credentials> → Reset
+Secret → update the password manager → notify everyone to repaste.
 
 ## How to use
 

@@ -1,5 +1,5 @@
 ---
-description: One-time guided setup for Google Workspace MCP (Gmail + Sheets). Walks you through Google Cloud Console and Claude Desktop install. ~10 minutes.
+description: One-time guided setup for Google Workspace MCP (Gmail + Sheets). Paste your company-provided Google credentials into Claude Desktop. ~3 minutes.
 ---
 
 Run the one-time Google OAuth setup.
