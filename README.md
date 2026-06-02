@@ -17,6 +17,24 @@ Once installed, you just chat with Claude — it walks you through the rest.
 5. Add Slack: **Customize → Connectors → Slack → Connect**.
 6. **Restart Claude Desktop** fully (Cmd/Ctrl+Q, then reopen).
 
+### How to update to a newer version of these plugins
+
+Claude Desktop does **not** auto-refresh the marketplace from GitHub. When
+this repo publishes a new plugin version, you need to manually refresh:
+
+1. **Customize → Plugins** → find this marketplace entry → click **Refresh**
+   / **Update marketplace** (the marketplace itself, not the plugins under
+   it).
+2. After the refresh, the **Update available** badge appears next to
+   `pto-system` / `email-classify` if a newer version exists.
+3. Click **Update** on each plugin.
+4. **Quit Claude Desktop fully** (Cmd/Ctrl+Q) and reopen — plugin code is
+   only loaded at startup.
+
+If the badge doesn't appear after refresh, the marketplace clone is stuck
+on an old commit. Recovery: **Remove marketplace** → **Add marketplace**
+again with the same URL → reinstall the two plugins → quit + reopen.
+
 ## How to set up Google (one-time)
 
 This plugin uses Google credentials your **admin has already provisioned**

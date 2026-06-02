@@ -1,11 +1,14 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "email-classify",
   "displayName": "Email Classifier",
   "version": "0.2.0",
   "description": "Classify recent Gmail messages into business categories (contract, sales, support, finance, hr, newsletter, internal) and apply Gmail labels via the Google Workspace MCP. Built because Claude's built-in Google connector cannot edit labels.",
   "author": {
-    "name": "stanl"
+    "name": "deadline314"
   },
+  "homepage": "https://github.com/deadline314/AI-requirements/tree/main/email_classify",
+  "repository": "https://github.com/deadline314/AI-requirements",
   "keywords": ["gmail", "email", "classification", "labels", "automation"],
   "license": "MIT"
 }
